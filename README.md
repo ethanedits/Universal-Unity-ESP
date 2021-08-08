@@ -87,3 +87,9 @@ Inside our Entity Loop, under the player position code we wrote previously, we w
 Vector3 w2s_footpos = Camera.main.WorldToScreenPoint(playerFootPos);
 Vector3 w2s_headpos = Camera.main.WorldToScreenPoint(playerHeadPos);
 ```
+
+### *Rendering*
+---------------------------------------------------
+
+To _render_ our ESP, we need to use the [Render.cs](https://github.com/ethanedits/Universal-Unity-ESP/blob/main/Universal-Unity-ESP/Render.cs) class provided in the source.
+This will allow us to simply _draw_ **lines**, **boxes**, and **text** on the screen (the functions simplify Unity's GUI functions)
