@@ -1,6 +1,8 @@
 # Universal-Unity-ESP
 This is a *guide to creating* an **Internal ESP** for any [Unity Engine](https://en.wikipedia.org/wiki/Unity_(game_engine)) game. (Source included in the Universal-Unity-ESP folder, video guide [here](https://youtu.be/ww5OKW7GwCk))
 
+If you plan to just use the source, make sure you change the DLLs (Project References), and change to your gameobject :)
+
 NOTICE: If you have not created a Unity Internal before, I suggest you watch [my tutorial](https://youtu.be/VeMZ8NM9f3o) that will introduce you to the basics, and give you knowledge that will be needed for this guide (ex: creating a class library, reversing gameobjects, adding references, setting up loader, etc.)
 
 ![Example](https://github.com/ethanedits/Universal-Unity-ESP/blob/main/images/slapshotESP.gif)
@@ -32,7 +34,7 @@ Vector3 gameObjectPosition = gameObject.transform.position;
 ### *Entity Loop*
 ---------------------------------------------------
 
-Now that we know how to get a GameObject's position, and what ***GameObject is our player***, we can start *writing our ESP*. Inside of the `OnGui()` function we are putting our Entity Loop, which is a foreach loop that finds loaded objects of the type `OnlinePlayer` in the scene, and stores that as an array.
+Now that we know how to get a GameObject's position, and what ***GameObject is our player***, we can start *writing our ESP*. Inside of the `OnGui()` function we are putting our Entity Loop, which is a foreach loop that finds loaded objects of the type `OnlinePlayer` in the scene.
 ```csharp
 void OnGUI() 
 {
@@ -91,5 +93,54 @@ Vector3 w2s_headpos = Camera.main.WorldToScreenPoint(playerHeadPos);
 ### *Rendering*
 ---------------------------------------------------
 
-To _render_ our ESP, we need to use the [Render.cs](https://github.com/ethanedits/Universal-Unity-ESP/blob/main/Universal-Unity-ESP/Render.cs) class provided in the source.
-This will allow us to simply _draw_ **lines**, **boxes**, and **text** on the screen (the functions simplify Unity's GUI functions)
+To _render_ our ESP, we need to add the [Render.cs](https://github.com/ethanedits/Universal-Unity-ESP/blob/main/Universal-Unity-ESP/Render.cs) class to our project, provided in the source.
+This will allow us to simply _draw_ **lines**, **boxes**, and **text** on the screen (the functions simplify Unity's GUI functions).
+
+We will now create a new function called `DrawBoxESP()` that we can call to **draw** the box esp from the OnGUI() function. We need to input our **screen position** Vector3s for our _head and foot_, and we will also include a Color.
+```csharp
+public void DrawBoxESP(Vector3 footpos, Vector3 headpos, Color color)
+{
+
+}
+```
+
+Inside our newly created function we will create three **floats**. _Height_ is for the _height of our player_, _width offset is the width of our player_, and _width_ is the _width_ of the **esp box**.
+
+```csharp
+float height = headpos.y - footpos.y;
+float widthOffset = 2f;
+float width = height / widthOffset;
+```
+
+Now we can call `DrawBox()` and `DrawLine()` from our **Render** class to draw our _ESP Box_, and (optional) _Snapline_.
+
+```csharp
+//ESP BOX
+Render.DrawBox(footpos.x - (width / 2), (float)Screen.height - footpos.y - height, width, height, color, 2f);
+
+//Snapline
+Render.DrawLine(new Vector2((float)(Screen.width / 2), (float)(Screen.height / 2)), new Vector2(footpos.x, (float)Screen.height - footpos.y), color, 2f);
+```
+
+To change the **snapline** from snapping from the _center of the screen_ to the _bottom_, you can change `(float)(Screen.height / 2))` to `(float)(Screen.height - 1))`. Other than that, you can change the _thickness_ of the Box and Line by changing the _last variable_ which is currently at _2f_.
+
+Now we are finished with our Drawing function! Time to call it in the entity loop and we will be done!
+
+**Returning** to our _Entity Loop_, below the `w2s_footpos` and `w2s_headpos` Vector3s, we will check that the esp box is not being drawn off screen, and then calling the `DrawBoxESP()` function.
+
+```csharp
+if (w2s_footpos.z > 0f)
+{
+    DrawBoxESP(w2s_footpos, w2s_headpos, Color.red);
+}
+```
+
+### *Conclusion*
+---------------------------------------------------
+
+_Finally_ we are finished with the **ESP**, build it, use your favorite mono injector (Class Name is: **Universal_Unity_ESP**, _not_ Universal-Unity-ESP) and you have yourself a **Universal Unity ESP**.
+
+![muckESP](https://user-images.githubusercontent.com/58463523/128660273-f91eb9eb-1276-43ac-b3c3-672270f26026.gif)
+
+
+
